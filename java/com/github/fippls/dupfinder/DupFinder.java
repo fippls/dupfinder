@@ -19,11 +19,16 @@ import java.util.stream.Collectors;
  * File duplication finder.
  *
  * TODO: Parameters: --minsize X, --maxsize X
+ * TODO: $RECYCLE.BIN causes problems on Windows, path walker enters directory even if filtered out
+ *
+ * CHANGELOG:
+ *   1.0  - First version published to github
+ *   1.01 - Switched from Files.walk() to Files.walkFileTree for increased control and error-handling
  *
  * @author github.com/fippls
  */
 public class DupFinder {
-    private static final String VERSION = "1.0";
+    private static final String VERSION = "1.01";
 
     public static void main(String[] args) {
         System.out.println(version() + " (using " + Settings.threadPoolSize + " threads)");

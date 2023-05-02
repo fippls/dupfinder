@@ -92,6 +92,11 @@ public class Settings {
     public static final List<String> stringsToExclude = List.of();
 
     /**
+     * Some directories are problematic to just enter, for example the Windows recycle bin so just skip those.
+     */
+    public static final List<String> directoriesToExclude = List.of("$RECYCLE.BIN", "System Volume Information", "lost+found");
+
+    /**
      * Exclude all files that end with these entries.
      */
     public static final List<String> fileEndingsToExclude = List.of(".git", ".class");

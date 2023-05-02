@@ -4,6 +4,8 @@ import com.github.fippls.dupfinder.data.Settings;
 
 import java.nio.file.Path;
 import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Various util methods for string conversions.
@@ -20,6 +22,31 @@ public class StringUtil {
 
     private StringUtil() {
         // Not allowed
+    }
+
+    /**
+     * Checks if path contains any of the list entries.
+     */
+    public static boolean containsAny(Path path, List<String> list) {
+        for (String entry : list) {
+            if (path.toString().contains(entry)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * If the exception message is different than the path, return it.
+     * @return If exception message is the same as the path, return an empty string.
+     */
+    public static String skipRedundantExceptionMessage(Path path, Exception exception) {
+        if (Objects.equals(path.toString(), exception.getMessage())) {
+            return "";
+        }
+
+        return ": " + exception.getMessage();
     }
 
     public static String quotePath(Path path) {
