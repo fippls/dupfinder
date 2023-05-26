@@ -75,19 +75,19 @@ public class StringUtil {
 
     public static String getFileSizeString(long fileSize) {
         if (fileSize > TERA) {
-            return StringUtil.doubleToString2Decimals(fileSize / (double) TERA) + " TiB";
+            return StringUtil.doubleToString2Decimals(fileSize / (double) TERA) + " TB";
         }
 
         if (fileSize > GIGA) {
-            return StringUtil.doubleToString2Decimals(fileSize / (double) GIGA) + " GiB";
+            return StringUtil.doubleToString2Decimals(fileSize / (double) GIGA) + " GB";
         }
 
         if (fileSize > MEGA) {
-            return StringUtil.doubleToString1Decimal(fileSize / (double) MEGA) + " MiB";
+            return StringUtil.doubleToString1Decimal(fileSize / (double) MEGA) + " MB";
         }
 
         if (fileSize > KILO) {
-            return StringUtil.doubleToString1Decimal(fileSize / (double) KILO) + " KiB";
+            return StringUtil.doubleToString1Decimal(fileSize / (double) KILO) + " KB";
         }
 
         return fileSize + " bytes";
