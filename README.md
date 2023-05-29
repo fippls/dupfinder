@@ -19,3 +19,6 @@ Until there's a released version, build the entire project and run the "DupCheck
    DupFinder /home/user/Documents /mnt/externaldrive/documents
    DupFilder "c:\Users\aUser\Documents and Settings" u:\documents 
 ```
+
+# Requirements
+- At least Java 11
