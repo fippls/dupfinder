@@ -42,15 +42,19 @@ public abstract class AbstractHashChecker {
             long numDone = THREAD_POOL.numDone();
 
             if (Settings.showProgressUpdates && timer.done()) {
+                long totalBytesProcessed = AbstractHashCallable.getAndClearBytesRead();
+                var mbPerSecond = totalBytesProcessed / 1000.0 / Settings.millisecondsBetweenProgressUpdates;
+
                 Log.info("  Task ", numDone, " / ", THREAD_POOL.getNumTasks(),
-                        " (free memory: ", StringUtil.getFileSizeString(runtime.freeMemory()), ')');
+                        " (free memory: ", StringUtil.getFileSizeString(runtime.freeMemory()), ')',
+                        ", speed: ", StringUtil.doubleToString1Decimal(mbPerSecond), " MB/s");
                 timer.reset();
             }
 
             finished = numDone >= THREAD_POOL.getNumTasks();
 
             if (!finished) {
-                sleep(100);
+                sleep(50);
             }
         }
 

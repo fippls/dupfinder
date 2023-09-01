@@ -1,5 +1,6 @@
 package com.github.fippls.dupfinder.thread.task;
 
+import com.github.fippls.dupfinder.data.Settings;
 import com.github.fippls.dupfinder.detection.result.FileInfo;
 import com.github.fippls.dupfinder.file.MD5SumFileReader;
 
@@ -21,6 +22,14 @@ public class SimpleHashCallable extends AbstractHashCallable {
         stopFileOperation();
 
         fileInfo.setHash(result);
+
+        synchronized (numBytesProcessed) {
+            var fileSize = runSimpleHashCheck()
+                    ? Settings.numBytesForShortMD5Check
+                    : fileInfo.fileSize();
+
+            numBytesProcessed.add(fileSize);
+        }
 
         return fileInfo;
     }

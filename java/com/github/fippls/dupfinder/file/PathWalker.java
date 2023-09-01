@@ -6,7 +6,8 @@ import com.github.fippls.dupfinder.util.StringUtil;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -45,5 +46,4 @@ public class PathWalker {
         checkSumCollection.resolve(true);
         return checkSumCollection;
     }
-
 }
