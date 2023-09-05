@@ -4,11 +4,8 @@ import com.github.fippls.dupfinder.data.Settings;
 import com.github.fippls.dupfinder.detection.result.FileInfo;
 import com.github.fippls.dupfinder.util.Log;
 
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Threaded operation for calculating a hash code.
@@ -16,11 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class AbstractHashCallable implements Callable<FileInfo> {
     private static final Semaphore fileHandles = new Semaphore(Settings.maxSimultaneousFileReads);
-    /**
-     * Every task will add the final processed size to this queue.
-     * The statistics thread will empty it out and summarize.
-     */
-    protected static final Queue<Long> numBytesProcessed = new LinkedList<>();
+
     protected final FileInfo fileInfo;
 
     protected AbstractHashCallable(FileInfo fileInfo) {
@@ -36,7 +29,7 @@ public abstract class AbstractHashCallable implements Callable<FileInfo> {
         }
         catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            Log.error("Interrupted while acquiring file lock: " + e.getMessage());
+            Log.error("Interrupted while acquiring file lock: ", e.getMessage());
         }
     }
 
@@ -45,17 +38,7 @@ public abstract class AbstractHashCallable implements Callable<FileInfo> {
     }
 
     /**
-     * Fetch the total number of bytes read since last call, and empty the queue of read stats.
+     * Fetch the total number of bytes read since last call, and reset the value.
      */
-    public static Long getAndClearBytesRead() {
-        final var total = new AtomicLong(0);
-        synchronized (numBytesProcessed) {
-            numBytesProcessed
-                    .forEach(total::addAndGet);
-
-            numBytesProcessed.clear();
-        }
-
-        return total.get();
-    }
+    public abstract Long getAndClearBytesRead();
 }

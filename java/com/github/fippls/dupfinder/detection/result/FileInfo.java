@@ -17,6 +17,7 @@ public class FileInfo {
 
     /** Current hashcode, will change over the course of the program execution */
     private String hash;
+
     /**
      * If the file has been completely hashed, this is set to true.
      * The usage for this is to avoid re-hashing small files several times of the entire file has already been hashed.

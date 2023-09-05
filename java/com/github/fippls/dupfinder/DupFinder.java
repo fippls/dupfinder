@@ -24,12 +24,13 @@ import java.util.stream.Collectors;
  * CHANGELOG:
  *   1.0  - First version published to github
  *   1.01 - Switched from Files.walk() to Files.walkFileTree for increased control and error-handling
- *   1.02 - Display MB/s process speed since last free memory display
+ *   1.02 - Display MB/s process speed since last free memory display (only finished files)
+ *   1.03 - Display MB/s process speed (true value), plus print stats on number of files read
  *
  * @author github.com/fippls
  */
 public class DupFinder {
-    private static final String VERSION = "1.02";
+    private static final String VERSION = "1.03";
 
     public static void main(String[] args) {
         System.out.println(version() + " (using " + Settings.threadPoolSize + " threads)");

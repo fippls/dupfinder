@@ -42,7 +42,7 @@ public abstract class AbstractHashChecker {
             long numDone = THREAD_POOL.numDone();
 
             if (Settings.showProgressUpdates && timer.done()) {
-                long totalBytesProcessed = AbstractHashCallable.getAndClearBytesRead();
+                long totalBytesProcessed = THREAD_POOL.totalNumBytesProcessedSinceLastCall();
                 var mbPerSecond = totalBytesProcessed / 1000.0 / Settings.millisecondsBetweenProgressUpdates;
 
                 Log.info("  Task ", numDone, " / ", THREAD_POOL.getNumTasks(),

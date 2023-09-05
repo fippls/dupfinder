@@ -3,6 +3,7 @@ package com.github.fippls.dupfinder.file;
 import com.github.fippls.dupfinder.data.Settings;
 import com.github.fippls.dupfinder.detection.result.FileInfo;
 import com.github.fippls.dupfinder.detection.result.PotentialDuplicateCollection;
+import com.github.fippls.dupfinder.util.IntervalTimer;
 import com.github.fippls.dupfinder.util.Log;
 import com.github.fippls.dupfinder.util.StringUtil;
 
@@ -17,11 +18,14 @@ import java.nio.file.attribute.BasicFileAttributes;
  * @author github.com/fippls
  */
 class FileVisitorProcessor implements FileVisitor<Path> {
+    private final IntervalTimer timer = new IntervalTimer(Settings.millisecondsBetweenProgressUpdates);
     private final PotentialDuplicateCollection checkSumCollection;
-    /**
-     * The number of files that got excluded because of rules
-     */
+    /** The number of files that got excluded because of rules */
     private long numRuleBasedExclusions = 0;
+
+    private long totalDirectoriesScanned = 0;
+    private long totalFilesScanned = 0;
+    private long totalFilesAdded = 0;
 
     FileVisitorProcessor(PotentialDuplicateCollection checkSumCollection) {
         this.checkSumCollection = checkSumCollection;
@@ -34,6 +38,7 @@ class FileVisitorProcessor implements FileVisitor<Path> {
             return FileVisitResult.SKIP_SUBTREE;
         }
 
+        totalDirectoriesScanned++;
         return FileVisitResult.CONTINUE;
     }
 
@@ -44,7 +49,16 @@ class FileVisitorProcessor implements FileVisitor<Path> {
 
             if (fileInfo.isValid()) {
                 checkSumCollection.add(fileInfo);
+                totalFilesAdded++;
             }
+        }
+
+        totalFilesScanned++;
+
+        if (Settings.showProgressUpdates && timer.done()) {
+            Log.info("  Files added/scanned: ", totalFilesAdded, " / ", totalFilesScanned,
+                    " (directories scanned: ", totalDirectoriesScanned, ")");
+            timer.reset();
         }
 
         return FileVisitResult.CONTINUE;

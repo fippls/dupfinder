@@ -34,8 +34,8 @@ public class PathWalker {
                 Files.walkFileTree(path, fileProcessor);
             }
             catch (IOException | UncheckedIOException e) {
-                Log.error("I/O exception when reading path: " + e.getMessage() + "\nPath search aborted after " +
-                        checkSumCollection.numTotalFiles() + " files were scanned, continuing...");
+                Log.error("I/O exception when reading path: ", e.getMessage(), "\nPath search aborted after ",
+                        checkSumCollection.numTotalFiles(), " files were scanned, continuing...");
             }
         }
 

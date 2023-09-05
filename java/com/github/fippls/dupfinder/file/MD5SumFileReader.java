@@ -20,6 +20,7 @@ public class MD5SumFileReader {
     private final FileInfo fileInfo;
     private final byte[] readBuffer;
     private final boolean simpleHashCheck;
+    private long totalBytesReadSinceLastFetch = 0;
 
     public MD5SumFileReader(FileInfo fileInfo, boolean simpleHashCheck) {
         this.md5 = createMD5();
@@ -39,6 +40,7 @@ public class MD5SumFileReader {
             while ((bytesRead = fileInputStream.read(readBuffer)) != -1) {
                 md5.update(readBuffer, 0, bytesRead);
                 totalBytesRead += bytesRead;
+                totalBytesReadSinceLastFetch += bytesRead;
 
                 if (simpleHashCheck) {
                     break;      // Read only once
@@ -57,6 +59,12 @@ public class MD5SumFileReader {
 
         // Return the undigested value so we can close the file handle and calculate the MD5 sum separately:
         return new UndigestedMd5(totalBytesRead, md5);
+    }
+
+    public long getTotalBytesReadAndReset() {
+        long result = totalBytesReadSinceLastFetch;
+        totalBytesReadSinceLastFetch = 0;
+        return result;
     }
 
     private static MessageDigest createMD5() {
