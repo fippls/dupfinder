@@ -20,17 +20,21 @@ import java.util.stream.Collectors;
  *
  * TODO: Parameters: --minsize X, --maxsize X
  * TODO: $RECYCLE.BIN causes problems on Windows, path walker enters directory even if filtered out
+ * TODO: when an operation (small/full) is completed, display average processing speed across the entire operation
  *
  * CHANGELOG:
  *   1.0  - First version published to github
  *   1.01 - Switched from Files.walk() to Files.walkFileTree for increased control and error-handling
  *   1.02 - Display MB/s process speed since last free memory display (only finished files)
  *   1.03 - Display MB/s process speed (true value), plus print stats on number of files read
+ *   1.04 - Fixed display bug (KB instead of kB)
+ *          Now correctly sorting duplicates according to size and fixed bug in total duplication calculation
+ *          Ignoring access denied errors and also showing which file caused a problem
  *
  * @author github.com/fippls
  */
 public class DupFinder {
-    private static final String VERSION = "1.03";
+    private static final String VERSION = "1.04";
 
     public static void main(String[] args) {
         System.out.println(version() + " (using " + Settings.threadPoolSize + " threads)");

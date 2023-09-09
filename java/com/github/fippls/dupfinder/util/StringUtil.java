@@ -87,7 +87,7 @@ public class StringUtil {
         }
 
         if (fileSize > KILO) {
-            return StringUtil.doubleToString1Decimal(fileSize / (double) KILO) + " KB";
+            return StringUtil.doubleToString1Decimal(fileSize / (double) KILO) + " kB";
         }
 
         return fileSize + " bytes";

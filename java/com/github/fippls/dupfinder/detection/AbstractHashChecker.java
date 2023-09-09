@@ -8,6 +8,7 @@ import com.github.fippls.dupfinder.thread.task.AbstractHashCallable;
 import com.github.fippls.dupfinder.util.IntervalTimer;
 import com.github.fippls.dupfinder.util.Log;
 import com.github.fippls.dupfinder.util.StringUtil;
+import com.github.fippls.dupfinder.util.TimerUtil;
 
 /**
  * Abstract implementation of something that calculates hash codes for files.
@@ -42,8 +43,8 @@ public abstract class AbstractHashChecker {
             long numDone = THREAD_POOL.numDone();
 
             if (Settings.showProgressUpdates && timer.done()) {
-                long totalBytesProcessed = THREAD_POOL.totalNumBytesProcessedSinceLastCall();
-                var mbPerSecond = totalBytesProcessed / 1000.0 / Settings.millisecondsBetweenProgressUpdates;
+                long bytesProcessed = THREAD_POOL.totalNumBytesProcessedSinceLastCall();
+                var mbPerSecond = bytesProcessed / 1000.0 / Settings.millisecondsBetweenProgressUpdates;
 
                 Log.info("  Task ", numDone, " / ", THREAD_POOL.getNumTasks(),
                         " (free memory: ", StringUtil.getFileSizeString(runtime.freeMemory()), ')',
@@ -54,24 +55,15 @@ public abstract class AbstractHashChecker {
             finished = numDone >= THREAD_POOL.getNumTasks();
 
             if (!finished) {
-                sleep(50);
+                TimerUtil.sleep(50);
             }
         }
 
-        THREAD_POOL.fetchResult()
-                .forEach(potentialDuplicateCollection::add);
+        var results = THREAD_POOL.fetchResult();
+        results.forEach(potentialDuplicateCollection::add);
 
         return potentialDuplicateCollection.resolve(optimizationStats);
     }
 
     protected abstract AbstractHashCallable createCallable(FileInfo fileInfo);
-
-    private static void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
 }

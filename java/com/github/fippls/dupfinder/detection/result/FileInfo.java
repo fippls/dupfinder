@@ -5,7 +5,6 @@ import com.github.fippls.dupfinder.util.PathUtil;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * Info about one file
@@ -70,16 +69,6 @@ public class FileInfo {
 
     public void setError(String errorMessage) {
         this.errorMessage = errorMessage.intern();
-    }
-
-    public static long totalFileSize(List<FileInfo> fileInfos) {
-        long total = 0;
-
-        for (FileInfo info : fileInfos) {
-            total += info.fileSize;
-        }
-
-        return total;
     }
 
     @Override

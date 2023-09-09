@@ -3,6 +3,7 @@ package com.github.fippls.dupfinder.file;
 import com.github.fippls.dupfinder.data.Settings;
 import com.github.fippls.dupfinder.detection.result.FileInfo;
 import com.github.fippls.dupfinder.detection.result.PotentialDuplicateCollection;
+import com.github.fippls.dupfinder.util.ErrorUtil;
 import com.github.fippls.dupfinder.util.IntervalTimer;
 import com.github.fippls.dupfinder.util.Log;
 import com.github.fippls.dupfinder.util.StringUtil;
@@ -69,7 +70,16 @@ class FileVisitorProcessor implements FileVisitor<Path> {
         // The "System Volume Information" in Windows somehow is never traversed as either file nor directory, but
         // still ends up causing access denied exceptions, so if that happens just don't print redundant errors:
         if (Settings.logPathErrors && !StringUtil.containsAny(path, Settings.directoriesToExclude)) {
-            Log.error("Error checking ", path, StringUtil.skipRedundantExceptionMessage(path, exception));
+            switch (ErrorUtil.of(exception)) {
+                case ACCESS_DENIED:
+                    // Don't log access denied exceptions
+                    break;
+
+                default:
+                    Log.error("Error checking ", path,
+                            StringUtil.skipRedundantExceptionMessage(path, exception));
+                    break;
+            }
         }
 
         return FileVisitResult.CONTINUE;

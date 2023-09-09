@@ -53,7 +53,7 @@ public class MD5SumFileReader {
         catch (IOException e) {
             fileInfo.setError(e.getMessage());
             var cause = e.getCause();
-            Log.error("I/O exception: ", e.getMessage(),
+            Log.error("I/O exception for ", fileInfo, ": ", e.getMessage(),
                     cause != null ? ", caused by: " + cause + ')' : "");
         }
 
@@ -61,7 +61,7 @@ public class MD5SumFileReader {
         return new UndigestedMd5(totalBytesRead, md5);
     }
 
-    public long getTotalBytesReadAndReset() {
+    public long getBytesReadAndReset() {
         long result = totalBytesReadSinceLastFetch;
         totalBytesReadSinceLastFetch = 0;
         return result;

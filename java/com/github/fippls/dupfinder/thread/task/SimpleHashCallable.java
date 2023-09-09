@@ -20,7 +20,7 @@ public class SimpleHashCallable extends AbstractHashCallable {
             return 0L;
         }
 
-        return md5.getTotalBytesReadAndReset();
+        return md5.getBytesReadAndReset();
     }
 
     @Override
