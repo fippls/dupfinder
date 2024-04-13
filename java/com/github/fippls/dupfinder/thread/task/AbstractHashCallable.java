@@ -12,8 +12,6 @@ import java.util.concurrent.Semaphore;
  * @author github.com/fippls
  */
 public abstract class AbstractHashCallable implements Callable<FileInfo> {
-    private static final Semaphore fileHandles = new Semaphore(Settings.maxSimultaneousFileReads);
-
     protected final FileInfo fileInfo;
 
     protected AbstractHashCallable(FileInfo fileInfo) {
@@ -21,11 +19,18 @@ public abstract class AbstractHashCallable implements Callable<FileInfo> {
     }
 
     /**
+     * Returns a semaphore which controls the maximum number of simultaneous file operations.
+     * @see Settings#maxSimultaneousFileReadsSimple For small files.
+     * @see Settings#maxSimultaneousFileReadsFull For large files.
+     */
+    protected abstract Semaphore fileHandleSemaphore();
+
+    /**
      * We can only have a limited number of file operations active at one time.
      */
     protected void startFileOperation() {
         try {
-            fileHandles.acquire();
+            fileHandleSemaphore().acquire();
         }
         catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -34,7 +39,7 @@ public abstract class AbstractHashCallable implements Callable<FileInfo> {
     }
 
     protected void stopFileOperation() {
-        fileHandles.release();
+        fileHandleSemaphore().release();
     }
 
     /**

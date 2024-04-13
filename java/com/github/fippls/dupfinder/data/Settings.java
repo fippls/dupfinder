@@ -40,8 +40,10 @@ public class Settings {
      *   20k check: 110 seconds, 88.3% file count reduction, 7.7% size reduction
      *   200k check: 111 seconds, 88.7% file count reduction, 7.7% size reduction
      *
+     *   Leave it rather high to include as many small files as possible in the short MD5 check to not have to re-check
+     *   them later on during the full scan.
      */
-    public static int numBytesForShortMD5Check = 60_000;
+    public static int numBytesForShortMD5Check = 131_072;
 
     /**
      * Read buffer size for file reads.
@@ -69,16 +71,24 @@ public class Settings {
     public static int minimumCopyCount = 2;
 
     /**
-     * The maximum number of concurrent file read operations that can be active.
+     * The maximum number of concurrent file read operations that can be active when doing the simple hash check.
+     * If running via samba mounts, java can throw strange non-descriptive errors if this number is too high.
+     * This number should generally be much larger than {@link Settings#maxSimultaneousFileReadsFull}.
+     */
+    public static int maxSimultaneousFileReadsSimple = 12;
+
+    /**
+     * The maximum number of concurrent file read operations that can be active when doing the full hash check.
      * If running via samba mounts, java can throw strange non-descriptive errors if this number is too high.
      */
-    public static int maxSimultaneousFileReads = 4;
+    public static int maxSimultaneousFileReadsFull = 2;
 
     /**
      * Number of processing threads.
      */
+    @SuppressWarnings("ConstantConditions")
     public static int threadPoolSize = Math.min(
-            Settings.maxSimultaneousFileReads * 2,
+            Math.max(Settings.maxSimultaneousFileReadsSimple, Settings.maxSimultaneousFileReadsFull) + 1,
             Runtime.getRuntime().availableProcessors() + 1);
 
     /**

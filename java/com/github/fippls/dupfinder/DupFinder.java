@@ -30,14 +30,21 @@ import java.util.stream.Collectors;
  *   1.04 - Fixed display bug (KB instead of kB)
  *          Now correctly sorting duplicates according to size and fixed bug in total duplication calculation
  *          Ignoring access denied errors and also showing which file caused a problem
+ *   1.05 - Support different number of max file operations depending on large or small files
+ *          For spinning disks, large performance gains to increase number of files when scanning small files,
+ *          and decreasing number of files when scanning large files
  *
  * @author github.com/fippls
  */
 public class DupFinder {
-    private static final String VERSION = "1.04";
+    private static final String VERSION = "1.05";
 
     public static void main(String[] args) {
         System.out.println(version() + " (using " + Settings.threadPoolSize + " threads)");
+        System.out.println("   Maximum simultaneous file reads" +
+                "\n      for small files: " + Settings.maxSimultaneousFileReadsSimple +
+                "\n      for large files (over " + StringUtil.getFileSizeString(Settings.numBytesForShortMD5Check) +
+                        "): " + Settings.maxSimultaneousFileReadsFull);
         PerformanceTimer totalTime = new PerformanceTimer();
 
         if (args.length == 0) {
