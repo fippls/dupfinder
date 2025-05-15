@@ -14,7 +14,7 @@ Uses a multi-step approach that is much quicker than just blindly running MD5 ch
 - A GUI on top of this would be extremely useful but I've already attempted that and failed, UI work is not my strong suite
 
 # How to use
-Until there's a released version, build the entire project and run the "DupChecker" main class and supply path parameters to all places where you want to look for potentially duplicated files:
+Until there's a released version, build the entire project and run the "DupFinder" main class and supply path parameters to all places where you want to look for potentially duplicated files:
 ```
    DupFinder /home/user/Documents /mnt/externaldrive/documents
    DupFinder "c:\Users\aUser\Documents and Settings" u:\documents 
