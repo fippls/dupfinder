@@ -17,4 +17,8 @@ public class TimerUtil {
             Thread.currentThread().interrupt();
         }
     }
+
+    public static double nanosToSeconds(long nanos) {
+        return (double) nanos / 1.0E9D;
+    }
 }
