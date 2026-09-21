@@ -85,9 +85,10 @@ public class Settings {
 
     /**
      * Number of processing threads.
+     * Read semaphores can be the limiting factor.
      */
     @SuppressWarnings("ConstantConditions")
-    public static int threadPoolSize = Math.min(
+    public static int threadPoolSize = Math.max(
             Math.max(Settings.maxSimultaneousFileReadsSimple, Settings.maxSimultaneousFileReadsFull) + 1,
             Runtime.getRuntime().availableProcessors() + 1);
 

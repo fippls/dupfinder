@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +22,7 @@ public class ThreadPool {
     private static final ExecutorService service;
 
     private final List<Task> enqueuedTasks = new LinkedList<>();
+    private final AtomicLong doneCount = new AtomicLong();
 
     static {
         service = Executors.newFixedThreadPool(
@@ -28,8 +30,8 @@ public class ThreadPool {
     }
 
     public void addTask(AbstractHashCallable callable) {
-        var task = new Task(callable, service.submit(callable));
-        enqueuedTasks.add(task);
+        var future = service.submit(new CountingCallable(callable, doneCount));
+        enqueuedTasks.add(new Task(callable, future));
     }
 
     public int getNumTasks() {
@@ -37,10 +39,7 @@ public class ThreadPool {
     }
 
     public long numDone() {
-        return enqueuedTasks.stream()
-                .map(Task::future)
-                .filter(Future::isDone)
-                .count();
+        return doneCount.get();
     }
 
     public List<FileInfo> fetchResult() {
@@ -53,6 +52,7 @@ public class ThreadPool {
 
         // Remove for next run:
         enqueuedTasks.clear();
+        doneCount.set(0);
 
         return result;
     }
@@ -102,6 +102,29 @@ public class ThreadPool {
         }
 
         return totalBytesRead;
+    }
+
+    /**
+     * Count tasks as they finish, so we don't have to check every future on each progress update.
+     */
+    private static class CountingCallable implements Callable<FileInfo> {
+        private final AbstractHashCallable delegate;
+        private final AtomicLong doneCount;
+
+        CountingCallable(AbstractHashCallable delegate, AtomicLong doneCount) {
+            this.delegate = delegate;
+            this.doneCount = doneCount;
+        }
+
+        @Override
+        public FileInfo call() throws Exception {
+            try {
+                return delegate.call();
+            }
+            finally {
+                doneCount.incrementAndGet();
+            }
+        }
     }
 
     private static class Task {

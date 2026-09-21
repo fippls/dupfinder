@@ -31,7 +31,7 @@ public class FileSizeBasedDuplicationPrinter implements FileDuplicationPrinter {
 
         for (var entry : checkSums.entrySet()) {
             var sizeOfOneFile = entry.getValue().get(0).fileSize();
-            var sizeOfAllDuplicates = sizeOfOneFile * entry.getValue().size() - 1;
+            var sizeOfAllDuplicates = sizeOfOneFile * (entry.getValue().size() - 1);
 
             // The key in the map is the total size of the duplicated files:
             sizeToHashes.computeIfAbsent(sizeOfAllDuplicates,

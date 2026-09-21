@@ -33,11 +33,12 @@ import java.util.stream.Collectors;
  *   1.05 - Support different number of max file operations depending on large or small files
  *          For spinning disks, large performance gains to increase number of files when scanning small files,
  *          and decreasing number of files when scanning large files
+ *   1.06 - Bugfixes via AI code review
  *
  * @author github.com/fippls
  */
 public class DupFinder {
-    private static final String VERSION = "1.05";
+    private static final String VERSION = "1.06";
 
     public static void main(String[] args) {
         System.out.println(version() + " (using " + Settings.threadPoolSize + " threads)");

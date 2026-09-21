@@ -12,7 +12,8 @@ import java.util.concurrent.Semaphore;
  */
 public class SimpleHashCallable extends AbstractHashCallable {
     private static final Semaphore fileHandleSemaphore = new Semaphore(Settings.maxSimultaneousFileReadsSimple);
-    private MD5SumFileReader md5;
+    // Volatile since the main thread reads this from getAndClearBytesRead()
+    private volatile MD5SumFileReader md5;
 
     public SimpleHashCallable(FileInfo fileInfo) {
         super(fileInfo);

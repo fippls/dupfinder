@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Calculates MD5 sum for files.
@@ -20,7 +21,7 @@ public class MD5SumFileReader {
     private final FileInfo fileInfo;
     private final byte[] readBuffer;
     private final boolean simpleHashCheck;
-    private long totalBytesReadSinceLastFetch = 0;
+    private final AtomicLong totalBytesReadSinceLastFetch = new AtomicLong();
 
     public MD5SumFileReader(FileInfo fileInfo, boolean simpleHashCheck) {
         this.md5 = createMD5();
@@ -40,7 +41,7 @@ public class MD5SumFileReader {
             while ((bytesRead = fileInputStream.read(readBuffer)) != -1) {
                 md5.update(readBuffer, 0, bytesRead);
                 totalBytesRead += bytesRead;
-                totalBytesReadSinceLastFetch += bytesRead;
+                totalBytesReadSinceLastFetch.addAndGet(bytesRead);
 
                 if (simpleHashCheck) {
                     break;      // Read only once
@@ -62,9 +63,7 @@ public class MD5SumFileReader {
     }
 
     public long getBytesReadAndReset() {
-        long result = totalBytesReadSinceLastFetch;
-        totalBytesReadSinceLastFetch = 0;
-        return result;
+        return totalBytesReadSinceLastFetch.getAndSet(0);
     }
 
     private static MessageDigest createMD5() {

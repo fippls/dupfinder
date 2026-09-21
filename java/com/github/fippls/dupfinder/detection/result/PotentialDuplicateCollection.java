@@ -37,14 +37,11 @@ public class PotentialDuplicateCollection {
      * Optimize the list of potential duplicates to remove non-applicable entries.
      */
     public PotentialDuplicateCollection resolve(boolean optimizationStats) {
-        // Remove all files that had errors before we do anything:
-        checkSums.values().stream()
-                .flatMap(List::stream)
-                .filter(fi -> !fi.isValid())
-                .collect(Collectors.toList())
-                    .forEach(fi -> checkSums.remove(fi.hash()));
+        // First remove all the files that had errors, and then any group left empty
+        checkSums.values().forEach(files -> files.removeIf(fi -> !fi.isValid()));
+        checkSums.entrySet().removeIf(entry -> entry.getValue().isEmpty());
 
-        // First up we need to optimize and remove all files that have no duplicates
+        // Then optimize and remove all files that have no duplicates
         long preOptimizeFileCount = numTotalFiles();
         long preOptimizeFileSize = totalSize();
         checkSums.keySet().stream()
